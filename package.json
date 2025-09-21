@@ -1,0 +1,28 @@
+{
+  "name": "micro-blogging",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon run app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gasakiri/Projeto-Back-End-EC48B.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gasakiri/Projeto-Back-End-EC48B/issues"
+  },
+  "homepage": "https://github.com/gasakiri/Projeto-Back-End-EC48B#readme",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
