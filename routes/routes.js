@@ -1,5 +1,6 @@
 const UserController = require("../src/controllers/UserController");
 const PostController = require("../src/controllers/PostController");
+const CommentController = require("../src/controllers/CommentController");
 
 module.exports = async (req, res) => {
   const { url, method } = req;
@@ -68,6 +69,63 @@ module.exports = async (req, res) => {
   ) {
     req.params = { id: urlParts[1] };
     return PostController.delete(req, res);
+  }
+
+  // --- ROTAS DE COMENTÁRIOS ---
+
+  // Rota: GET /posts/:postId/comments -> Buscar comentários em uma postagem
+  if (
+    url.startsWith("/posts/") &&
+    url.endsWith("/comments") &&
+    urlParts.length === 3 &&
+    method === "GET"
+  ) {
+    req.params = { id: urlParts[1] };
+    return CommentController.getCommentsByPost(req, res);
+  }
+
+  // Rota: POST /posts/:postId/comments -> Criar um comentário
+  if (
+    url.startsWith("/posts/") &&
+    url.endsWith("/comments") &&
+    urlParts.length === 3 &&
+    method === "POST"
+  ) {
+    req.params = { postId: urlParts[1] };
+    return CommentController.create(req, res);
+  }
+
+  // Rota: GET /posts/:postId/coments/:commentId -> Buscar um comentário por ID
+  if (
+    urlParts[0] === "posts" &&
+    urlParts[2] === "comments" &&
+    urlParts.length === 4 &&
+    method === "GET"
+  ) {
+    req.params = { postId: urlParts[1], commentId: urlParts[3] };
+    return CommentController.getCommentById(req, res);
+  }
+
+  // Rota: PUT /posts/:postId/comments/:commentId -> Atualizar um comentário
+  if (
+    urlParts[0] === "posts" &&
+    urlParts[2] === "comments" &&
+    urlParts.length === 4 &&
+    method === "PUT"
+  ) {
+    req.params = { postId: urlParts[1], commentId: urlParts[3] };
+    return CommentController.update(req, res);
+  }
+
+  // Rota: DELETE /posts/:postId/comments/:commentId -> Deletar um comentário
+  if (
+    urlParts[0] === "posts" &&
+    urlParts[2] === "comments" &&
+    urlParts.length === 4 &&
+    method === "DELETE"
+  ) {
+    req.params = { postId: urlParts[1], commentId: urlParts[3] };
+    return CommentController.delete(req, res);
   }
 
   // --- ROTA NÃO ENCONTRADA ---
