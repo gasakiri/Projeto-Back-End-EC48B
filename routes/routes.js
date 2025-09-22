@@ -1,4 +1,5 @@
 const UserController = require("../src/controllers/UserController");
+const PostController = require("../src/controllers/PostController");
 
 module.exports = async (req, res) => {
   const { url, method } = req;
@@ -38,6 +39,35 @@ module.exports = async (req, res) => {
   ) {
     req.params = { id: urlParts[1] };
     return UserController.deleteUser(req, res);
+  }
+
+  // --- ROTAS DE POSTAGENS ---
+
+  // Rota: GET /posts -> Buscar uma postagem por ID
+  if (url.startsWith("/posts/") && urlParts.length === 2 && method === "GET") {
+    req.params = { id: urlParts[1] };
+    return PostController.getPost(req, res);
+  }
+
+  // Rota: POST /posts -> Criar uma postagem
+  if (url === "/posts" && method === "POST") {
+    return PostController.create(req, res);
+  }
+
+  // Rota: PUT /posts/:id -> Atualizar uma postagem
+  if (url.startsWith("/posts/") && urlParts.length === 2 && method === "PUT") {
+    req.params = { id: urlParts[1] };
+    return PostController.update(req, res);
+  }
+
+  // Rota: DELETE /posts/:id -> Deletar uma postagem
+  if (
+    url.startsWith("/posts/") &&
+    urlParts.length === 2 &&
+    method === "DELETE"
+  ) {
+    req.params = { id: urlParts[1] };
+    return PostController.delete(req, res);
   }
 
   // --- ROTA NÃO ENCONTRADA ---
