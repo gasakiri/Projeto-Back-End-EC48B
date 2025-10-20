@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 // Cria o caminho para o diretório de logs
-const logDir = path.join(__dirname, "../../logs");
+const logDir = path.join(__dirname, "../logs");
 
 // Cria o caminho completo para o arquivo de log
 const logFilePath = path.join(logDir, "error.log");
