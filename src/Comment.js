@@ -10,13 +10,13 @@ const CommentSchema = mongoose.Schema(
     authorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: [true, "É necessária a identificação do autor"],
     },
 
     postId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
-      required: true,
+      required: [true, "É necessária a identificação da postagem"],
     },
   },
 
