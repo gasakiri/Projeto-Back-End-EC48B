@@ -1,31 +1,21 @@
-// app.js
-
 const connectDB = require("./db");
 const { logError } = require("./errorHandler");
 const User = require("./User");
 const Post = require("./Post");
 const Comment = require("./Comment");
-const mongoose = require("mongoose");
 
-/**
- * Função principal que executa os testes de CRUD.
- */
 const runTests = async () => {
   try {
-    // 1. Conecta ao banco de dados
-    await connectDB();
     console.log("--- INICIANDO TESTES DE CRUD ---");
 
-    // --- TESTES DE USUÁRIO ---
-    // --- TESTE DE LOG DE ERRO ---
-    console.log("\n--- Gerando um erro de validação para teste ---");
+    // --- TESTE DE LOG DE ERRO - USUÁRIO ---
+    console.log("\n--- Gerando um erro de validação para teste (Usuário) ---");
     try {
-      // Tentativa de criar um usuário sem o campo 'email', que é obrigatório.
-      // Isso forçará um erro de validação do Mongoose.
       console.log("Tentando criar um usuário com dados inválidos...");
       await User.create({
         username: "user_sem_email",
         password: "password123",
+        // email está faltando
       });
     } catch (error) {
       console.error(
@@ -34,15 +24,13 @@ const runTests = async () => {
       logError(error, "app.js.flow.createUser.invalid");
     }
 
-    // --- TESTES DE POSTAGEM ---
-    // --- TESTE DE LOG DE ERRO ---
-    console.log("\n--- Gerando um erro de validação para teste ---");
+    // --- TESTE DE LOG DE ERRO - POSTAGEM ---
+    console.log("\n--- Gerando um erro de validação para teste (Postagem) ---");
     try {
-      // Tentativa de criar uma postagem sem passar a identificação do usuário
-      // Isso forçará um erro de validação do Mongoose.
       console.log("Tentando criar uma postagem com dados inválidos...");
       await Post.create({
         content: "Hello World!"
+        // authorId está faltando
       });
     } catch (error) {
       console.error(
@@ -51,16 +39,14 @@ const runTests = async () => {
       logError(error, "app.js.flow.createPost.invalid");
     }
 
-    // --- TESTES DE COMENTÁRIO ---
-    // --- TESTE DE LOG DE ERRO ---
-    console.log("\n--- Gerando um erro de validação para teste ---");
+    // --- TESTE DE LOG DE ERRO - COMENTÁRIO ---
+    console.log("\n--- Gerando um erro de validação para teste (Comentário) ---");
     try {
-      // Tentativa de criar um comentário sem passar a identificação do usuário
-      // Isso forçará um erro de validação do Mongoose.
       console.log("Tentando criar um comentário com dados inválidos...");
       await Comment.create({
         content: "Ótima postagem!",
         postId: "68f92edd7c46578f30cdfc7c"
+        // authorId está faltando
       });
     } catch (error) {
       console.error(
@@ -86,8 +72,7 @@ const runTests = async () => {
     // Atualizar
     const updatedUser = await User.findByIdAndUpdate(
       newUser._id,
-      { username: "updated_username" },
-      { new: true } // Retorna o documento atualizado
+      { username: "updated_username" }
     );
     console.log("Usuário Atualizado:", updatedUser);
 
@@ -107,8 +92,7 @@ const runTests = async () => {
     // Atualizar
     const updatePost = await Post.findByIdAndUpdate(
       newPost._id,
-      { content: "updated_post" },
-      { new: true }
+      { content: "updated_post" }
     );
     console.log("Postagem Atualizada:", updatePost);
 
@@ -129,8 +113,7 @@ const runTests = async () => {
     // Atualizar
     const updateComment = await Comment.findByIdAndUpdate(
       newComment._id,
-      { content: "updated_comment" },
-      { new: true }
+      { content: "updated_comment" }
     );
     console.log("Comentário Atualizado:", updateComment);
 
@@ -153,10 +136,9 @@ const runTests = async () => {
       "Um erro ocorreu durante os testes. Verifique o arquivo de log."
     );
   } finally {
-    // 5. Fecha a conexão com o banco de dados ao final dos testes
-    await mongoose.connection.close();
     console.log("\n--- TESTES FINALIZADOS ---");
-    console.log("Conexão com o MongoDB fechada.");
+    // Como cada método já fecha sua própria conexão, não é necessário fechar aqui
+    console.log("Testes concluídos.");
   }
 };
 

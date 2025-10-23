@@ -1,34 +1,30 @@
-// Post.js
 const connectDB = require("./db");
 const { logError } = require("./errorHandler");
 const { ObjectId } = require("mongodb");
 
 class Post {
-  constructor(content, authorId) {
-    // --- Validação de Presença ---
-    if (typeof content !== "string" || content.trim() === "") {
-      throw new Error("O conteúdo da postagem é obrigatório.");
-    }
-    if (!authorId) {
-      throw new Error("É necessária a identificação do autor.");
-    }
-
-    this.content = content.trim();
-    this.authorId = new ObjectId(authorId);
-  }
-
-  async save() {
+  static async create(postData) {
     let client;
     try {
+      // Validação de Presença
+      if (typeof postData.content !== "string" || postData.content.trim() === "") {
+        throw new Error("O conteúdo da postagem é obrigatório.");
+      }
+      if (!postData.authorId) {
+        throw new Error("É necessária a identificação do autor.");
+      }
+
       const { db, client: connectedClient } = await connectDB();
       client = connectedClient;
+
       const result = await db.collection("posts").insertOne({
-        content: this.content,
-        authorId: this.authorId,
+        content: postData.content.trim(),
+        authorId: new ObjectId(postData.authorId),
       });
-      return result;
+
+      return await db.collection("posts").findOne({ _id: result.insertedId });
     } catch (error) {
-      logError(error, "Post.save");
+      logError(error, "Post.create");
       throw error;
     } finally {
       if (client) await client.close();
@@ -40,9 +36,12 @@ class Post {
     try {
       const { db, client: connectedClient } = await connectDB();
       client = connectedClient;
-      return await db.collection("posts").findOne({ _id: new ObjectId(id) });
+      const post = await db.collection("posts").findOne({ _id: new ObjectId(id) });
+      
+      return post;
     } catch (error) {
       logError(error, "Post.findById");
+      throw error;
     } finally {
       if (client) await client.close();
     }
@@ -53,12 +52,14 @@ class Post {
     try {
       const { db, client: connectedClient } = await connectDB();
       client = connectedClient;
-      await db
+      const result = await db
         .collection("posts")
         .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
-      return this.findById(id);
+      
+      return await db.collection("posts").findOne({ _id: new ObjectId(id) });
     } catch (error) {
       logError(error, "Post.findByIdAndUpdate");
+      throw error;
     } finally {
       if (client) await client.close();
     }
@@ -69,9 +70,12 @@ class Post {
     try {
       const { db, client: connectedClient } = await connectDB();
       client = connectedClient;
-      return await db.collection("posts").deleteOne({ _id: new ObjectId(id) });
+      const result = await db.collection("posts").deleteOne({ _id: new ObjectId(id) });
+      
+      return result;
     } catch (error) {
       logError(error, "Post.findByIdAndDelete");
+      throw error;
     } finally {
       if (client) await client.close();
     }
