@@ -1,107 +1,149 @@
 
-
-# Micro-Blogging API - Projeto Web Back-End
+# Micro-Blogging - Projeto Web Back-End
 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 ## Sobre o Projeto
 
-CRUD para a plataforma de **micro-blogging**, similar ao Twitter, desenvolvida como parte do Projeto 1 da disciplina de **Programação Web Back-End (EC48B-C71)**.
+Biblioteca de classes para acesso a banco de dados MongoDB, desenvolvida como **Projeto 1 (Recuperação)** da disciplina de **Programação Web Back-End (EC48B-C71)**.
 
-A aplicação foi construída utilizando **Node.js** puro, sem o uso de frameworks como Express, para demonstrar um entendimento profundo do funcionamento do módulo `http` nativo. A interação com o banco de dados é gerenciada pelo **Mongoose**, que se conecta a uma instância do **MongoDB**.
+O projeto implementa um conjunto de **três classes** que representam entidades de um sistema de **micro-blogging** (similar ao Twitter), cada uma com métodos completos de **CRUD** (Create, Read, Update, Delete) para manipulação de dados no MongoDB.
 
-O projeto implementa todas as funcionalidades essenciais de uma rede social, incluindo gerenciamento de usuários, criação e gerenciamento de postagens e um sistema de comentários aninhados a posts. Um dos focos principais do projeto é o robusto sistema de **tratamento de exceções e logging**, que captura e armazena todos os erros da aplicação em um arquivo de log para facilitar a depuração e monitoramento.
-
----
+A aplicação utiliza o **driver nativo do MongoDB** para Node.js, **sem frameworks** como Express ou ODMs como Mongoose, demonstrando manipulação direta de operações de banco de dados. Inclui também um sistema robusto de **tratamento de exceções e logging** que captura e armazena erros em arquivo.
 
 ## Funcionalidades Principais
 
-*   **👤 Gerenciamento de Usuários:** CRUD completo (Criar, Ler, Atualizar, Deletar) para usuários.
-*   **📝 Gerenciamento de Postagens:** CRUD completo para as postagens dos usuários.
-*   **💬 Gerenciamento de Comentários:** Sistema de comentários vinculados a postagens, com operações CRUD completas.
-*   **⚙️ Validação de Dados:** Validação de campos obrigatórios e formato de dados diretamente no Schema do Mongoose, com feedback claro para o cliente em caso de erro.
-*   **📄 Logging de Erros:** Um módulo de tratamento de erros centralizado que registra todas as exceções da aplicação em `logs/error.log`, incluindo timestamp, contexto do erro e stack trace.
+*   **👤 Classe User:** CRUD completo para gerenciamento de usuários (username, email, password).
+*   **📝 Classe Post:** CRUD completo para gerenciamento de postagens (content, authorId).
+*   **💬 Classe Comment:** CRUD completo para gerenciamento de comentários (content, authorId, postId).
+*   **⚙️ Validação de Dados:** Validação de campos obrigatórios em todas as operações de criação.
+*   **🔒 Tratamento de Exceções:** Blocos try/catch em todos os métodos com propagação adequada de erros.
+*   **📄 Logging de Erros:** Módulo centralizado que registra todas as exceções em `logs/error.log`, incluindo timestamp, contexto e stack trace.
+*   **✅ Script de Testes:** app.js executa testes automatizados de todos os métodos CRUD das três classes.
 
 ---
-
 ## Estrutura do Projeto
 
-O projeto está organizado da seguinte forma para garantir manutenibilidade e escalabilidade:
-
 ```
+
 micro-blogging/
-├── logs
-│   └── error.log       # Arquivo onde os erros são registrados
+├── logs/
+│   └── error.log           \# Registro de erros da aplicação
+├── app.js                  \# Script de testes das classes
+├── User.js                 \# Classe de usuários com CRUD
+├── Post.js                 \# Classe de postagens com CRUD
+├── Comment.js              \# Classe de comentários com CRUD
+├── db.js                   \# Módulo de conexão com MongoDB
+├── errorHandler.js         \# Módulo de logging de erros
 ├── package.json
 ├── package-lock.json
-├── README.md
-└── src
-    ├── app.js          # Ponto de entrada da aplicação (criação do servidor)
-    ├── Comment.js
-    ├── db.js           # Configuração da conexão com o banco de dados
-    ├── errorHandler.js
-    ├── Post.js
-    └── User.js
+└── README.md
+
 ```
 
----
 
 ## Tecnologias Utilizadas
 
-*   **[Node.js](https://nodejs.org/)**: Ambiente de execução para o JavaScript no servidor.
+*   **[Node.js](https://nodejs.org/)**: Ambiente de execução JavaScript no servidor.
 *   **[MongoDB](https://www.mongodb.com/)**: Banco de dados NoSQL orientado a documentos.
-*   **[Mongoose](https://mongoosejs.com/)**: Biblioteca de modelagem de objetos (ODM) para o MongoDB, utilizada para definir schemas e validações.
+*   **[Driver Nativo MongoDB](https://www.npmjs.com/package/mongodb)**: Cliente oficial do MongoDB para Node.js.
 
----
 
 ## Como Executar o Projeto
-
-Siga os passos abaixo para configurar e rodar a aplicação em seu ambiente local.
 
 ### Pré-requisitos
 
 *   **Node.js** (versão 14.x ou superior)
 *   **npm** (geralmente instalado junto com o Node.js)
-*   **MongoDB** (serviço precisa estar em execução na máquina local na porta padrão `27017`)
+*   **MongoDB** rodando localmente na porta padrão `27017`
 
-### Passos para Instalação
+### Instalação
 
 1.  **Clone o repositório:**
-    ```sh
+    ```
     git clone https://github.com/gasakiri/Projeto-Back-End-EC48B.git
     cd Projeto-Back-End-EC48B
     ```
 
 2.  **Instale as dependências:**
-    ```sh
+    ```
     npm install
     ```
-    *(Nota: Embora o projeto use módulos nativos, ele utiliza o `mongoose` como dependência, que precisa ser instalado).*
 
-3.  **Configure a Conexão com o Banco de Dados:**
-    O projeto está configurado para se conectar a um banco local por padrão. A string de conexão está no arquivo `src/db.js`:
-    ```javascript
-    const MONGO_URI = "mongodb://localhost:27017/micro-blogging-db";
+3.  **Verifique a conexão com o banco:**
+    O projeto se conecta ao MongoDB local. A configuração está em `db.js`:
     ```
-    Certifique-se de que seu serviço MongoDB está ativo.
+    const MONGO_URI = "mongodb://localhost:27017";
+    const DB_NAME = "micro-blogging-db";
+    ```
+    Certifique-se de que o serviço MongoDB está ativo antes de executar.
 
-4.  **Inicie o servidor:**
-    ```sh
+4.  **Execute os testes:**
+    ```
     node src/app.js
     ```
----
+    O script criará, lerá, atualizará e deletará documentos das três coleções (users, posts, comments), exibindo os resultados no console e gravando logs de erro em `logs/error.log`.
+
+
+## Métodos Implementados
+
+### User.js
+
+*   `User.create(userData)` - Cria novo usuário com validação de campos obrigatórios e unicidade de username/email.
+*   `User.findById(id)` - Busca usuário por ID.
+*   `User.findByIdAndUpdate(id, updateData)` - Atualiza dados de um usuário existente.
+*   `User.findByIdAndDelete(id)` - Remove usuário do banco.
+
+### Post.js
+
+*   `Post.create(postData)` - Cria nova postagem vinculada a um autor.
+*   `Post.findById(id)` - Busca postagem por ID.
+*   `Post.findByIdAndUpdate(id, updateData)` - Atualiza conteúdo de uma postagem.
+*   `Post.findByIdAndDelete(id)` - Remove postagem do banco.
+
+### Comment.js
+
+*   `Comment.create(commentData)` - Cria novo comentário vinculado a um post e autor.
+*   `Comment.findById(id)` - Busca comentário por ID.
+*   `Comment.findByIdAndUpdate(id, updateData)` - Atualiza conteúdo de um comentário.
+*   `Comment.findByIdAndDelete(id)` - Remove comentário do banco.
+
 
 ## Tratamento de Erros e Logging
 
-O sistema de tratamento de erros é um pilar deste projeto.
+O sistema de tratamento de erros segue as boas práticas de captura e registro:
 
-*   **Captura**: Todos os controladores utilizam blocos `try...catch` para capturar exceções que possam ocorrer durante o processamento da requisição (ex: falha no banco de dados, dados inválidos).
-*   **Logging**: Ao capturar um erro, a função `logError` do módulo `src/errorHandler.js` é chamada. Ela formata uma mensagem de log detalhada e a anexa ao arquivo `logs/error.log`.
-*   **Formato do Log**: Cada entrada de log contém:
-    *   `Timestamp`: Data e hora exatas do erro.
-    *   `Contexto`: Onde o erro ocorreu.
-    *   `Mensagem do Erro`: A mensagem de erro original.
-    *   `Stack Trace`: A pilha de chamadas que levou ao erro, essencial para depuração.
+*   **Captura**: Cada método das classes utiliza blocos `try...catch` para capturar exceções durante operações de banco de dados ou validações.
+*   **Logging**: Ao capturar um erro, a função `logError` do módulo `errorHandler.js` é invocada, gravando o erro em `logs/error.log`.
+*   **Formato do Log**:
+    *   **Timestamp**: Data e hora exatas do erro (ISO 8601).
+    *   **Contexto**: Identificação do método onde o erro ocorreu (ex: "User.create").
+    *   **Mensagem**: Descrição do erro.
+    *   **Stack Trace**: Pilha de chamadas completa para depuração.
+
+**Exemplo de entrada no log:**
+```
+
+[2025-10-23T18:30:45.123Z] [Contexto: User.create]
+Erro: O e-mail é obrigatório.
+Stack: Error: O e-mail é obrigatório.
+at User.create (User.js:15:13)
+...
+
+```
+
+## Conformidade com os Requisitos
+
+Este projeto atende aos requisitos do **Projeto 1 - Recuperação** conforme feedback dos professores:
+
+✅ Três classes de armazenamento (User, Post, Comment)  
+✅ Métodos completos de CRUD em todas as classes  
+✅ Validação de campos obrigatórios  
+✅ Tratamento de exceções com try/catch  
+✅ Módulo de logging de erros (errorHandler.js)  
+✅ Módulo de conexão com banco (db.js)  
+✅ Script de testes (app.js)  
+✅ **SEM** arquitetura MVC, rotas ou servidor HTTP (conforme solicitado)
 
 ---
 
@@ -109,3 +151,11 @@ O sistema de tratamento de erros é um pilar deste projeto.
 
 - **[Gabriel Augusto Morisaki Rita](https://github.com/gasakiri)**
 - **[Mateus Bernardi Alves](https://github.com/Mateus-Bernardi)**
+
+
+## Licença
+
+Este projeto foi desenvolvido para fins acadêmicos como parte da disciplina EC48B-C71 - Programação Web Back-End.
+
+
+
