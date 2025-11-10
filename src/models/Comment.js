@@ -1,5 +1,5 @@
-const connectDB = require("./db");
-const { logError } = require("./errorHandler");
+const connectDB = require("../config/db");
+const { logError } = require("../config/errorHandler");
 const { ObjectId } = require("mongodb");
 
 class Comment {
@@ -7,7 +7,10 @@ class Comment {
     let client;
     try {
       // Validação de Presença
-      if (typeof commentData.content !== "string" || commentData.content.trim() === "") {
+      if (
+        typeof commentData.content !== "string" ||
+        commentData.content.trim() === ""
+      ) {
         throw new Error("O conteúdo do comentário é obrigatório.");
       }
       if (!commentData.authorId) {
@@ -26,7 +29,9 @@ class Comment {
         postId: new ObjectId(commentData.postId),
       });
 
-      return await db.collection("comments").findOne({ _id: result.insertedId });
+      return await db
+        .collection("comments")
+        .findOne({ _id: result.insertedId });
     } catch (error) {
       logError(error, "Comment.create");
       throw error;
@@ -40,8 +45,10 @@ class Comment {
     try {
       const { db, client: connectedClient } = await connectDB();
       client = connectedClient;
-      const comment = await db.collection("comments").findOne({ _id: new ObjectId(id) });
-      
+      const comment = await db
+        .collection("comments")
+        .findOne({ _id: new ObjectId(id) });
+
       return comment;
     } catch (error) {
       logError(error, "Comment.findById");
@@ -59,7 +66,7 @@ class Comment {
       const result = await db
         .collection("comments")
         .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
-      
+
       return await db.collection("comments").findOne({ _id: new ObjectId(id) });
     } catch (error) {
       logError(error, "Comment.findByIdAndUpdate");
@@ -77,7 +84,7 @@ class Comment {
       const result = await db
         .collection("comments")
         .deleteOne({ _id: new ObjectId(id) });
-      
+
       return result;
     } catch (error) {
       logError(error, "Comment.findByIdAndDelete");

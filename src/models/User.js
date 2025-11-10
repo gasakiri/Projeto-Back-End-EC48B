@@ -1,5 +1,5 @@
-const connectDB = require("./db");
-const { logError } = require("./errorHandler");
+const connectDB = require("../config/db");
+const { logError } = require("../config/errorHandler");
 const { ObjectId } = require("mongodb");
 
 class User {
@@ -7,13 +7,19 @@ class User {
     let client;
     try {
       // Validação de Presença e Formato
-      if (typeof userData.username !== "string" || userData.username.trim() === "") {
+      if (
+        typeof userData.username !== "string" ||
+        userData.username.trim() === ""
+      ) {
         throw new Error("O nome de usuário é obrigatório.");
       }
       if (typeof userData.email !== "string" || userData.email.trim() === "") {
         throw new Error("O e-mail é obrigatório.");
       }
-      if (typeof userData.password !== "string" || userData.password.trim() === "") {
+      if (
+        typeof userData.password !== "string" ||
+        userData.password.trim() === ""
+      ) {
         throw new Error("A senha é obrigatória.");
       }
 
@@ -58,7 +64,7 @@ class User {
       const user = await db
         .collection("users")
         .findOne({ _id: new ObjectId(id) });
-      
+
       return user;
     } catch (error) {
       logError(error, "User.findById");
@@ -76,7 +82,7 @@ class User {
       const result = await db
         .collection("users")
         .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
-      
+
       if (result.modifiedCount > 0) {
         return await db.collection("users").findOne({ _id: new ObjectId(id) });
       }
@@ -97,10 +103,30 @@ class User {
       const result = await db
         .collection("users")
         .deleteOne({ _id: new ObjectId(id) });
-      
+
       return result;
     } catch (error) {
       logError(error, "User.findByIdAndDelete");
+      throw error;
+    } finally {
+      if (client) await client.close();
+    }
+  }
+  static async findByEmail(email) {
+    let client;
+    try {
+      // Normaliza o email para minúsculas para garantir a busca correta
+      const normalizedEmail = email.trim().toLowerCase();
+      const { db, client: connectedClient } = await connectDB();
+      client = connectedClient;
+
+      const user = await db
+        .collection("users")
+        .findOne({ email: normalizedEmail });
+
+      return user;
+    } catch (error) {
+      logError(error, "User.findByEmail");
       throw error;
     } finally {
       if (client) await client.close();

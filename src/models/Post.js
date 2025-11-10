@@ -1,5 +1,5 @@
-const connectDB = require("./db");
-const { logError } = require("./errorHandler");
+const connectDB = require("../config/db");
+const { logError } = require("../config/errorHandler");
 const { ObjectId } = require("mongodb");
 
 class Post {
@@ -7,7 +7,10 @@ class Post {
     let client;
     try {
       // Validação de Presença
-      if (typeof postData.content !== "string" || postData.content.trim() === "") {
+      if (
+        typeof postData.content !== "string" ||
+        postData.content.trim() === ""
+      ) {
         throw new Error("O conteúdo da postagem é obrigatório.");
       }
       if (!postData.authorId) {
@@ -36,8 +39,10 @@ class Post {
     try {
       const { db, client: connectedClient } = await connectDB();
       client = connectedClient;
-      const post = await db.collection("posts").findOne({ _id: new ObjectId(id) });
-      
+      const post = await db
+        .collection("posts")
+        .findOne({ _id: new ObjectId(id) });
+
       return post;
     } catch (error) {
       logError(error, "Post.findById");
@@ -55,7 +60,7 @@ class Post {
       const result = await db
         .collection("posts")
         .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
-      
+
       return await db.collection("posts").findOne({ _id: new ObjectId(id) });
     } catch (error) {
       logError(error, "Post.findByIdAndUpdate");
@@ -70,8 +75,10 @@ class Post {
     try {
       const { db, client: connectedClient } = await connectDB();
       client = connectedClient;
-      const result = await db.collection("posts").deleteOne({ _id: new ObjectId(id) });
-      
+      const result = await db
+        .collection("posts")
+        .deleteOne({ _id: new ObjectId(id) });
+
       return result;
     } catch (error) {
       logError(error, "Post.findByIdAndDelete");
