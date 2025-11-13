@@ -58,6 +58,25 @@ class Comment {
     }
   }
 
+  static async findAll(postId) {
+    let client;
+    try {
+      const { db, client: connectedClient } = await connectDB();
+      client = connectedClient;
+      const comments = await db
+        .collection("comments")
+        .find({ postId: new ObjectId(postId) })
+        .toArray();
+
+      return comments;
+    } catch (error) {
+      logError(error, "Comment.findAll");
+      throw error;
+    } finally {
+      if (client) await client.close();
+    }
+  }
+
   static async findByIdAndUpdate(id, updateData) {
     let client;
     try {
