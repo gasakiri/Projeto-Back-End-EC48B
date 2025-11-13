@@ -1,149 +1,147 @@
+# Micro-Blogging API - Projeto Web Back-End
 
-# Micro-Blogging - Projeto Web Back-End
-
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 ## Sobre o Projeto
 
-Biblioteca de classes para acesso a banco de dados MongoDB, desenvolvida como **Projeto 1 (Recuperação)** da disciplina de **Programação Web Back-End (EC48B-C71)**.
+Este repositório contém o **Projeto 2** da disciplina de **Programação Web Back-End (EC48B-C71)**. O projeto consiste em uma **API RESTful** completa para uma plataforma de **micro-blogging**, similar ao Twitter.
 
-O projeto implementa um conjunto de **três classes** que representam entidades de um sistema de **micro-blogging** (similar ao Twitter), cada uma com métodos completos de **CRUD** (Create, Read, Update, Delete) para manipulação de dados no MongoDB.
+Construído sobre o **Node.js** e o framework **Express.js**, o projeto evolui as classes de acesso a dados do Projeto 1 para criar um servidor web funcional. Ele implementa um sistema de autenticação baseado em sessões, rotas protegidas e operações completas de **CRUD** (Create, Read, Update, Delete) para usuários, postagens e comentários.
 
-A aplicação utiliza o **driver nativo do MongoDB** para Node.js, **sem frameworks** como Express ou ODMs como Mongoose, demonstrando manipulação direta de operações de banco de dados. Inclui também um sistema robusto de **tratamento de exceções e logging** que captura e armazena erros em arquivo.
+A API é projetada para servir como o back-end para qualquer aplicação front-end, retornando dados em formato **JSON** e utilizando códigos de status HTTP para comunicar os resultados das operações.
 
 ## Funcionalidades Principais
 
-*   **👤 Classe User:** CRUD completo para gerenciamento de usuários (username, email, password).
-*   **📝 Classe Post:** CRUD completo para gerenciamento de postagens (content, authorId).
-*   **💬 Classe Comment:** CRUD completo para gerenciamento de comentários (content, authorId, postId).
-*   **⚙️ Validação de Dados:** Validação de campos obrigatórios em todas as operações de criação.
-*   **🔒 Tratamento de Exceções:** Blocos try/catch em todos os métodos com propagação adequada de erros.
-*   **📄 Logging de Erros:** Módulo centralizado que registra todas as exceções em `logs/error.log`, incluindo timestamp, contexto e stack trace.
-*   **✅ Script de Testes:** app.js executa testes automatizados de todos os métodos CRUD das três classes.
+*   **👤 Autenticação de Usuários:** Sistema completo com rotas para cadastro (`signup`), login (`login`) e logout.
+*   **🔐 Gerenciamento de Sessão:** Utiliza `express-session` para manter os usuários autenticados e proteger rotas.
+*   **🛡️ Rotas Protegidas:** Middleware de autenticação (`requireAuth`) que garante que apenas usuários logados possam criar, editar ou deletar conteúdo.
+*   **📝 Gerenciamento de Posts (CRUD):** Endpoints para criar, listar, visualizar, atualizar e deletar postagens.
+*   **💬 Gerenciamento de Comentários (CRUD):** Endpoints para adicionar, listar, visualizar, atualizar e deletar comentários em uma postagem específica.
+*   **⚙️ Validação de Dados:** Verificação de campos obrigatórios e retorno de mensagens de erro claras.
+*   **📄 Logging de Erros:** Sistema robusto que registra todas as exceções em `logs/error.log` para facilitar a depuração.
+*   **🏛️ Arquitetura Organizada:** O código é estruturado em Models, Views, Controllers (MVC), com separação clara de responsabilidades (rotas, controladores, modelos, middlewares).
 
 ---
+
 ## Estrutura do Projeto
 
 ```
-
-micro-blogging/
+micro-blogging-api/
 ├── logs/
-│   └── error.log           \# Registro de erros da aplicação
-├── app.js                  \# Script de testes das classes
-├── User.js                 \# Classe de usuários com CRUD
-├── Post.js                 \# Classe de postagens com CRUD
-├── Comment.js              \# Classe de comentários com CRUD
-├── db.js                   \# Módulo de conexão com MongoDB
-├── errorHandler.js         \# Módulo de logging de erros
+│   └── error.log               # Registro de todos os erros da aplicação
+├── src/
+│   ├── config/
+│   │   ├── db.js               # Módulo de conexão com o MongoDB
+│   │   └── errorHandler.js     # Módulo de logging de erros
+│   ├── controllers/
+│   │   ├── authController.js   # Lógica para signup, login e logout
+│   │   ├── postController.js   # Lógica CRUD para posts
+│   │   └── commentController.js# Lógica CRUD para comentários
+│   ├── middleware/
+│   │   └── authMiddleware.js   # Middleware para proteger rotas
+│   ├── models/
+│   │   ├── User.js             # Classe de modelo para usuários
+│   │   ├── Post.js             # Classe de modelo para postagens
+│   │   └── Comment.js          # Classe de modelo para comentários
+│   ├── routes/
+│   │   ├── authRoutes.js       # Definição das rotas de autenticação
+│   │   ├── postRoutes.js       # Definição das rotas de posts
+│   │   └── commentRoutes.js    # Definição das rotas de comentários (aninhadas)
+│   └── app.js                  # Ponto de entrada da aplicação, configuração do servidor Express
 ├── package.json
-├── package-lock.json
 └── README.md
-
 ```
-
 
 ## Tecnologias Utilizadas
 
 *   **[Node.js](https://nodejs.org/)**: Ambiente de execução JavaScript no servidor.
+*   **[Express.js](https://expressjs.com/)**: Framework para construção de APIs e aplicações web.
+*   **[Express-session](https://www.npmjs.com/package/express-session)**: Middleware para gerenciamento de sessões.
 *   **[MongoDB](https://www.mongodb.com/)**: Banco de dados NoSQL orientado a documentos.
-*   **[Driver Nativo MongoDB](https://www.npmjs.com/package/mongodb)**: Cliente oficial do MongoDB para Node.js.
-
+*   **[Driver Nativo MongoDB](https://www.npmjs.com/package/mongodb)**: Cliente oficial para interação com o banco.
 
 ## Como Executar o Projeto
 
 ### Pré-requisitos
 
 *   **Node.js** (versão 14.x ou superior)
-*   **npm** (geralmente instalado junto com o Node.js)
-*   **MongoDB** rodando localmente na porta padrão `27017`
+*   **npm** (instalado junto com o Node.js)
+*   **MongoDB** rodando localmente na porta padrão `27017`.
+*   Um cliente de API como **[Postman](https://www.postman.com/)** ou **[Insomnia](https://insomnia.rest/)** para testar os endpoints.
 
 ### Instalação
 
 1.  **Clone o repositório:**
-    ```
+    ```bash
     git clone https://github.com/gasakiri/Projeto-Back-End-EC48B.git
     cd Projeto-Back-End-EC48B
     ```
 
 2.  **Instale as dependências:**
-    ```
+    ```bash
     npm install
     ```
 
-3.  **Verifique a conexão com o banco:**
-    O projeto se conecta ao MongoDB local. A configuração está em `db.js`:
-    ```
-    const MONGO_URI = "mongodb://localhost:27017";
-    const DB_NAME = "micro-blogging-db";
-    ```
-    Certifique-se de que o serviço MongoDB está ativo antes de executar.
+### Execução
 
-4.  **Execute os testes:**
-    ```
+1.  **Inicie o servidor:**
+    ```bash
     node src/app.js
     ```
-    O script criará, lerá, atualizará e deletará documentos das três coleções (users, posts, comments), exibindo os resultados no console e gravando logs de erro em `logs/error.log`.
+    Você verá a seguinte mensagem no console, indicando que o servidor está pronto para receber requisições:
+    ```
+    Servidor rodando em http://localhost:3000
+    ```
 
+## Documentação da API (Endpoints)
 
-## Métodos Implementados
+A seguir estão todos os endpoints disponíveis na API.
 
-### User.js
+---
 
-*   `User.create(userData)` - Cria novo usuário com validação de campos obrigatórios e unicidade de username/email.
-*   `User.findById(id)` - Busca usuário por ID.
-*   `User.findByIdAndUpdate(id, updateData)` - Atualiza dados de um usuário existente.
-*   `User.findByIdAndDelete(id)` - Remove usuário do banco.
+### Autenticação
 
-### Post.js
+| Método | Rota             | Descrição                     | Proteção | Corpo da Requisição (JSON)                            |
+| :----- | :--------------- | :---------------------------- | :------- | :---------------------------------------------------- |
+| `POST` | `/auth/signup`   | Registra um novo usuário.       | Pública  | `{ "username": "...", "email": "...", "password": "..." }` |
+| `POST` | `/auth/login`    | Autentica um usuário e cria uma sessão. | Pública  | `{ "email": "...", "password": "..." }`                 |
+| `POST` | `/auth/logout`   | Encerra a sessão do usuário.    | Pública  | (Nenhum)                                              |
 
-*   `Post.create(postData)` - Cria nova postagem vinculada a um autor.
-*   `Post.findById(id)` - Busca postagem por ID.
-*   `Post.findByIdAndUpdate(id, updateData)` - Atualiza conteúdo de uma postagem.
-*   `Post.findByIdAndDelete(id)` - Remove postagem do banco.
+### Posts
 
-### Comment.js
+| Método  | Rota            | Descrição                      | Proteção                | Corpo da Requisição (JSON)           |
+| :------ | :-------------- | :----------------------------- | :---------------------- | :----------------------------------- |
+| `POST`    | `/post`         | Cria uma nova postagem.        | Requer Autenticação     | `{ "content": "..." }`               |
+| `GET`     | `/post`         | Lista todas as postagens.      | Pública                 | (Nenhum)                             |
+| `GET`     | `/post/:id`     | Busca uma postagem específica. | Pública                 | (Nenhum)                             |
+| `PATCH`   | `/post/:id`     | Atualiza uma postagem.         | Requer Autenticação (Autor) | `{ "content": "..." }`               |
+| `DELETE`  | `/post/:id`     | Exclui uma postagem.           | Requer Autenticação (Autor) | (Nenhum)                             |
 
-*   `Comment.create(commentData)` - Cria novo comentário vinculado a um post e autor.
-*   `Comment.findById(id)` - Busca comentário por ID.
-*   `Comment.findByIdAndUpdate(id, updateData)` - Atualiza conteúdo de um comentário.
-*   `Comment.findByIdAndDelete(id)` - Remove comentário do banco.
+### Comentários
 
+*As rotas de comentários são aninhadas sob as rotas de posts.*
 
-## Tratamento de Erros e Logging
+| Método  | Rota                       | Descrição                        | Proteção                | Corpo da Requisição (JSON)           |
+| :------ | :------------------------- | :------------------------------- | :---------------------- | :----------------------------------- |
+| `POST`    | `/post/:id/comments`       | Adiciona um comentário a um post.    | Requer Autenticação     | `{ "content": "..." }`               |
+| `GET`     | `/post/:id/comments`       | Lista todos os comentários de um post. | Pública                 | (Nenhum)                             |
+| `GET`     | `/post/:id/comments/:commentId` | Busca um comentário específico.      | Pública                 | (Nenhum)                             |
+| `PATCH`   | `/post/:id/comments/:commentId` | Atualiza um comentário.            | Requer Autenticação (Autor) | `{ "content": "..." }`               |
+| `DELETE`  | `/post/:id/comments/:commentId` | Exclui um comentário.              | Requer Autenticação (Autor) | (Nenhum)                             |
 
-O sistema de tratamento de erros segue as boas práticas de captura e registro:
+---
 
-*   **Captura**: Cada método das classes utiliza blocos `try...catch` para capturar exceções durante operações de banco de dados ou validações.
-*   **Logging**: Ao capturar um erro, a função `logError` do módulo `errorHandler.js` é invocada, gravando o erro em `logs/error.log`.
-*   **Formato do Log**:
-    *   **Timestamp**: Data e hora exatas do erro (ISO 8601).
-    *   **Contexto**: Identificação do método onde o erro ocorreu (ex: "User.create").
-    *   **Mensagem**: Descrição do erro.
-    *   **Stack Trace**: Pilha de chamadas completa para depuração.
+## Conformidade com os Requisitos do Projeto 2
 
-**Exemplo de entrada no log:**
-```
+Este projeto atende a todos os requisitos da proposta:
 
-[2025-10-23T18:30:45.123Z] [Contexto: User.create]
-Erro: O e-mail é obrigatório.
-Stack: Error: O e-mail é obrigatório.
-at User.create (User.js:15:13)
-...
-
-```
-
-## Conformidade com os Requisitos
-
-Este projeto atende aos requisitos do **Projeto 1 - Recuperação** conforme feedback dos professores:
-
-✅ Três classes de armazenamento (User, Post, Comment)  
-✅ Métodos completos de CRUD em todas as classes  
-✅ Validação de campos obrigatórios  
-✅ Tratamento de exceções com try/catch  
-✅ Módulo de logging de erros (errorHandler.js)  
-✅ Módulo de conexão com banco (db.js)  
-✅ Script de testes (app.js)  
-✅ **SEM** arquitetura MVC, rotas ou servidor HTTP (conforme solicitado)
+✅ **Framework Express.js:** Utilizado como base para o servidor e gerenciamento de rotas.  
+✅ **Rotas e Parâmetros (GET/POST):** Implementação completa de rotas RESTful com tratamento de `req.body` e `req.params`.  
+✅ **Uso de Sessões para Autenticidade:** O sistema de login cria uma sessão que é validada em rotas protegidas.  
+✅ **Retorno em Formato JSON:** Todas as respostas da API são enviadas no formato JSON.  
+✅ **Implementação dos Casos de Uso:** Funcionalidades de CRUD para posts e comentários estão completas e seguem a lógica de um micro-blog.  
+✅ **Validação de Campos e Mensagens de Erro:** Verificação de campos obrigatórios e retorno de respostas com códigos de status e mensagens claras.  
+✅ **Rotina de Login e Permissão:** A rotina de login e o middleware de autenticação identificam e controlam o acesso dos usuários ao sistema.
 
 ---
 
@@ -152,10 +150,6 @@ Este projeto atende aos requisitos do **Projeto 1 - Recuperação** conforme fee
 - **[Gabriel Augusto Morisaki Rita](https://github.com/gasakiri)**
 - **[Mateus Bernardi Alves](https://github.com/Mateus-Bernardi)**
 
-
 ## Licença
 
 Este projeto foi desenvolvido para fins acadêmicos como parte da disciplina EC48B-C71 - Programação Web Back-End.
-
-
-
