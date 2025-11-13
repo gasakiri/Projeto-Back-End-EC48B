@@ -52,6 +52,22 @@ class Post {
     }
   }
 
+  static async findAll() {
+    let client;
+    try {
+      const { db, client: connectedClient } = await connectDB();
+      client = connectedClient;
+      const posts = await db.collection("posts").find({}).toArray();
+
+      return posts;
+    } catch (error) {
+      logError(error, "Post.findAll");
+      throw error;
+    } finally {
+      if (client) await client.close();
+    }
+  }
+
   static async findByIdAndUpdate(id, updateData) {
     let client;
     try {

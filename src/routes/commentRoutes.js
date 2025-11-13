@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
+const { requireAuth } = require("../middleware/authMiddleware");
 const {
   createComment,
   getComment,
@@ -8,14 +9,14 @@ const {
   deleteComment,
 } = require("../controllers/commentController");
 
-router.post("/", createComment);
+router.post("/", requireAuth, createComment);
 
 router.get("/", getAllComments);
 
-router.get("/:id", getComment);
+router.get("/:commentId", getComment);
 
-router.patch("/:id", updateComment);
+router.patch("/:commentId", requireAuth, updateComment);
 
-router.delete("/:id", deleteComment);
+router.delete("/:commentId", requireAuth, deleteComment);
 
 module.exports = router;

@@ -11,19 +11,27 @@ const signup = async (req, res) => {
         .json({ message: "Nome de usuário, e-mail e senha são obrigatórios." });
     }
 
-    const user = await User.findByEmail(userData.email);
-    if (user) {
-      return res.status(409).json({ message: "E-mail já está sendo utilizado" });
+    const existing = await User.findByEmail(userData.email);
+    if (existing) {
+      return res
+        .status(409)
+        .json({ message: "E-mail já está sendo utilizado" });
     }
 
-    User.create(userData);
-    res.status(200).json({
+    const created = await User.create(userData);
+    return res.status(201).json({
       message: "Conta criada com sucesso",
-      user: userData.email,
+      user: {
+        id: created._id,
+        username: created.username,
+        email: created.email,
+      },
     });
   } catch (error) {
     logError(error, "authController.signup");
-    res.status(500).json({ message: "Ocorreu um erro interno no servidor" });
+    return res
+      .status(500)
+      .json({ message: "Ocorreu um erro interno no servidor" });
   }
 };
 

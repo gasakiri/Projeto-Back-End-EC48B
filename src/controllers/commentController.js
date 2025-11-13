@@ -38,12 +38,12 @@ const createComment = async (req, res) => {
 
 const getComment = async (req, res) => {
   try {
-    const commentId = req.params.id;
+    const commentId = req.params.commentId;
 
     if (!commentId) {
       return res
-        .status(401)
-        .json({ message: "Deve ser passada a identificação do comentário" });
+        .status(400)
+        .json({ message: "O ID do comentário é obrigatório." });
     }
 
     const comment = await Comment.findById(commentId);
@@ -53,7 +53,7 @@ const getComment = async (req, res) => {
 
     res.status(200).json({ comment });
   } catch (error) {
-    logError(error, "commentController.createComment");
+    logError(error, "commentController.getComment");
     res.status(500).json({ message: "Ocorreu um erro interno no servidor" });
   }
 };
@@ -76,8 +76,9 @@ const getAllComments = async (req, res) => {
 
 const updateComment = async (req, res) => {
   try {
-    const postId = req.params.id;
-    const commentId = req.params.id;
+    // Correção: Acessar os IDs corretamente
+    const postId = req.params.id; // ID da postagem
+    const commentId = req.params.commentId; // ID do comentário
     const commentData = req.body;
 
     const user = req.session.user;
@@ -86,11 +87,13 @@ const updateComment = async (req, res) => {
     }
 
     if (!postId || !commentId) {
-      return res.status(404).json({
-        message: "Deve ser passada a identificação da postagem e do comentário",
+      return res.status(400).json({
+        // 400 Bad Request
+        message: "O ID da postagem e do comentário são obrigatórios.",
       });
     }
 
+    // O restante da lógica permanece a mesma
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.status(404).json({ message: "Comentário não encontrado" });
@@ -100,6 +103,13 @@ const updateComment = async (req, res) => {
       return res.status(403).json({
         message: "Você não tem permissão para editar este comentário",
       });
+    }
+
+    // Pequena melhoria: validar se o conteúdo existe
+    if (!commentData.content || commentData.content.trim() === "") {
+      return res
+        .status(400)
+        .json({ message: "O conteúdo não pode ser vazio." });
     }
 
     const updateData = { content: commentData.content.trim() };
@@ -120,14 +130,16 @@ const updateComment = async (req, res) => {
       },
     });
   } catch (error) {
-    logError(error, "commentController.createComment");
+    // Corrigindo o contexto do log de erro
+    logError(error, "commentController.updateComment");
     res.status(500).json({ message: "Ocorreu um erro interno no servidor" });
   }
 };
 
 const deleteComment = async (req, res) => {
   try {
-    const commentId = req.params.id;
+    // Correção: Acessar o ID do comentário corretamente
+    const commentId = req.params.commentId;
 
     const user = req.session.user;
     if (!user) {
@@ -135,11 +147,13 @@ const deleteComment = async (req, res) => {
     }
 
     if (!commentId) {
-      return res.status(404).json({
-        message: "Deve ser passada a identificação da postagem e do comentário",
+      return res.status(400).json({
+        // 400 Bad Request
+        message: "O ID do comentário é obrigatório.",
       });
     }
 
+    // O restante da lógica permanece a mesma
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.status(404).json({ message: "Comentário não encontrado" });
@@ -147,7 +161,7 @@ const deleteComment = async (req, res) => {
 
     if (comment.authorId.toString() !== user.id.toString()) {
       return res.status(403).json({
-        message: "Você não tem permissão para editar este comentário",
+        message: "Você não tem permissão para excluir este comentário", // Mensagem corrigida
       });
     }
 
@@ -161,7 +175,8 @@ const deleteComment = async (req, res) => {
 
     res.status(200).json({ message: "Comentário excluído com sucesso" });
   } catch (error) {
-    logError(error, "commentController.createComment");
+    // Corrigindo o contexto do log de erro
+    logError(error, "commentController.deleteComment");
     res.status(500).json({ message: "Ocorreu um erro interno no servidor" });
   }
 };
