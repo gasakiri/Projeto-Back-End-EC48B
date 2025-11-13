@@ -2,6 +2,7 @@ const express = require("express");
 const session = require("express-session");
 
 const authRoutes = require("./routes/authRoutes");
+const postRoutes = require("./routes/postRoutes");
 
 const app = express();
 const PORT = 3000;
@@ -29,6 +30,8 @@ app.use(
 
 // As rotas de autenticação ficarão sob o prefixo /auth
 app.use("/auth", authRoutes);
+
+app.use("/post", postRoutes);
 
 // --- Rota de Teste ---
 app.get("/", (req, res) => {
