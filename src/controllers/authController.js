@@ -1,6 +1,32 @@
 const User = require("../models/User");
 const { logError } = require("../config/errorHandler");
 
+const signup = async (req, res) => {
+  try {
+    const userData = req.body;
+
+    if (!userData.username || !userData.email || !userData.password) {
+      return res
+        .status(400)
+        .json({ message: "Nome de usuário, e-mail e senha são obrigatórios." });
+    }
+
+    const user = await User.findByEmail(userData.email);
+    if (user) {
+      return res.status(409).json({ message: "E-mail já está sendo utilizado" });
+    }
+
+    User.create(userData);
+    res.status(200).json({
+      message: "Conta criada com sucesso",
+      user: userData.email,
+    });
+  } catch (error) {
+    logError(error, "authController.signup");
+    res.status(500).json({ message: "Ocorreu um erro interno no servidor" });
+  }
+};
+
 // Função para lidar com o Login
 const login = async (req, res) => {
   try {
@@ -56,6 +82,7 @@ const logout = (req, res) => {
 };
 
 module.exports = {
+  signup,
   login,
   logout,
 };
