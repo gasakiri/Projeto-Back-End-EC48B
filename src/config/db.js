@@ -1,6 +1,7 @@
 const { MongoClient } = require("mongodb");
+require("dotenv").config();
 
-const MONGO_URI = "mongodb://localhost:27017";
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017";
 const DB_NAME = "micro-blogging-db";
 
 const connectDB = async () => {

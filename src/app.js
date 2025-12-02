@@ -1,11 +1,12 @@
 const express = require("express");
 const session = require("express-session");
+require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
 const postRoutes = require("./routes/postRoutes");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // --- Middlewares Essenciais ---
 
@@ -15,13 +16,13 @@ app.use(express.json());
 // 2. Para configurar o sistema de sessões
 app.use(
   session({
-    secret: "uma_chave_secreta_muito_forte_e_dificil_de_adivinhar",
+    secret: process.env.SESSION_SECRET,
     resave: false, // Não salva a sessão a cada requisição se ela não for modificada
     saveUninitialized: false, // Não cria sessões para usuários que não fizeram login
     cookie: {
       secure: false,
       httpOnly: true, // Impede que o cookie da sessão seja acessado por JavaScript no cliente
-      maxAge: 1000 * 60 * 60 * 24, // Tempo de vida do cookie (ex: 24 horas)
+      maxAge: 1000 * 60 * 60 * 24, // Tempo de vida do cookie
     },
   })
 );
