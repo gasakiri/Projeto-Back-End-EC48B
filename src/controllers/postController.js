@@ -1,5 +1,6 @@
 const Post = require("../models/Post");
 const { logError } = require("../config/errorHandler");
+const { ObjectId } = require("mongodb");
 
 const createPost = async (req, res) => {
   try {
@@ -79,7 +80,7 @@ const updatePost = async (req, res) => {
       return res.status(404).json({ message: "Postagem não encontrada" });
     }
 
-    if (post.authorId.toString() !== user.id.toString()) {
+    if (!post.authorId.equals(new ObjectId(user.id))) {
       return res
         .status(403)
         .json({ message: "Você não tem permissão para editar esta postagem" });
@@ -142,7 +143,7 @@ const deletePost = async (req, res) => {
       return res.status(404).json({ message: "Postagem não encontrada" });
     }
 
-    if (post.authorId.toString() !== user.id.toString()) {
+    if (!post.authorId.equals(new ObjectId(user.id))) {
       return res.status(403).json({
         message: "Você não tem permissão para excluir esta postagem",
       });

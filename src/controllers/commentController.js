@@ -1,5 +1,6 @@
 const Comment = require("../models/Comment");
 const { logError } = require("../config/errorHandler");
+const { ObjectId } = require("mongodb");
 
 const createComment = async (req, res) => {
   try {
@@ -76,9 +77,8 @@ const getAllComments = async (req, res) => {
 
 const updateComment = async (req, res) => {
   try {
-    // Correção: Acessar os IDs corretamente
-    const postId = req.params.id; // ID da postagem
-    const commentId = req.params.commentId; // ID do comentário
+    const postId = req.params.id;
+    const commentId = req.params.commentId;
     const commentData = req.body;
 
     const user = req.session.user;
@@ -88,24 +88,21 @@ const updateComment = async (req, res) => {
 
     if (!postId || !commentId) {
       return res.status(400).json({
-        // 400 Bad Request
         message: "O ID da postagem e do comentário são obrigatórios.",
       });
     }
 
-    // O restante da lógica permanece a mesma
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.status(404).json({ message: "Comentário não encontrado" });
     }
 
-    if (comment.authorId.toString() !== user.id.toString()) {
+    if (!comment.authorId.equals(new ObjectId(user.id))) {
       return res.status(403).json({
         message: "Você não tem permissão para editar este comentário",
       });
     }
 
-    // Pequena melhoria: validar se o conteúdo existe
     if (!commentData.content || commentData.content.trim() === "") {
       return res
         .status(400)
@@ -130,7 +127,6 @@ const updateComment = async (req, res) => {
       },
     });
   } catch (error) {
-    // Corrigindo o contexto do log de erro
     logError(error, "commentController.updateComment");
     res.status(500).json({ message: "Ocorreu um erro interno no servidor" });
   }
@@ -138,7 +134,6 @@ const updateComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    // Correção: Acessar o ID do comentário corretamente
     const commentId = req.params.commentId;
 
     const user = req.session.user;
@@ -148,20 +143,18 @@ const deleteComment = async (req, res) => {
 
     if (!commentId) {
       return res.status(400).json({
-        // 400 Bad Request
         message: "O ID do comentário é obrigatório.",
       });
     }
 
-    // O restante da lógica permanece a mesma
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.status(404).json({ message: "Comentário não encontrado" });
     }
 
-    if (comment.authorId.toString() !== user.id.toString()) {
+    if (!comment.authorId.equals(new ObjectId(user.id))) {
       return res.status(403).json({
-        message: "Você não tem permissão para excluir este comentário", // Mensagem corrigida
+        message: "Você não tem permissão para excluir este comentário",
       });
     }
 
@@ -175,7 +168,6 @@ const deleteComment = async (req, res) => {
 
     res.status(200).json({ message: "Comentário excluído com sucesso" });
   } catch (error) {
-    // Corrigindo o contexto do log de erro
     logError(error, "commentController.deleteComment");
     res.status(500).json({ message: "Ocorreu um erro interno no servidor" });
   }
