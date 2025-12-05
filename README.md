@@ -69,7 +69,7 @@ micro-blogging-api/
 *   **MongoDB** rodando localmente na porta padrão `27017`.
 *   Um cliente de API como **[Postman](https://www.postman.com/)** ou **[Insomnia](https://insomnia.rest/)** para testar os endpoints.
 
-### Instalação
+### Instalação e Configuração
 
 1.  **Clone o repositório:**
     ```bash
@@ -82,13 +82,24 @@ micro-blogging-api/
     npm install
     ```
 
+3.  **Configure as Variáveis de Ambiente:**
+    O projeto utiliza um arquivo `.env` para configurações sensíveis.
+    *   Crie um arquivo chamado `.env` na raiz do projeto.
+    *   Copie o conteúdo do arquivo `.env.example` ou use o modelo abaixo:
+
+    ```env
+    PORT=3000
+    MONGO_URI=mongodb://localhost:27017/micro-blogging-db
+    SESSION_SECRET=sua_chave_secreta_super_segura
+    ```
+
 ### Execução
 
 1.  **Inicie o servidor:**
     ```bash
     node src/app.js
     ```
-    Você verá a seguinte mensagem no console, indicando que o servidor está pronto para receber requisições:
+    Você verá a seguinte mensagem no console:
     ```
     Servidor rodando em http://localhost:3000
     ```
