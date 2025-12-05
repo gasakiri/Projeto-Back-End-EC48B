@@ -89,7 +89,7 @@ micro-blogging-api/
 
     ```env
     PORT=3000
-    MONGO_URI=mongodb://localhost:27017/micro-blogging-db
+    MONGO_URI=mongodb://localhost:27017
     SESSION_SECRET=sua_chave_secreta_super_segura
     ```
 
